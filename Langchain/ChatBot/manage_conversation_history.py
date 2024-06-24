@@ -7,17 +7,29 @@ from langchain_core.messages import (
     HumanMessage, AIMessage
 )
 from operator import itemgetter
+from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain_core.runnables import RunnablePassthrough
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+from langchain_community.chat_message_histories import ChatMessageHistory
+from langchain_core.chat_history import BaseChatMessageHistory
 
 load_dotenv()
 
 # langsmith tracking
 os.environ['LANGCHAIN_TRACKING_V2'] = "true"
-os.environ['LANGCHAIN_API_KEY'] = os.getenv('LANGCHAIN_API_KEY')
+os.environ['LANGCHAIN_API_KEY'] = "os.getenv('LANGCHAIN_API_KEY')"
 
 # ollama llm
 model = ChatOllama(model='gemma')
+store = {}
+
+
+def get_session_history(session_id: str) -> BaseChatMessageHistory:
+    if session_id not in store:
+        store[session_id] = ChatMessageHistory()
+
+    return store[session_id]
+
 
 # Managing Conversation History
 """
@@ -73,6 +85,44 @@ chain = (
 response = chain.invoke(
     {
         "messages": messages + [HumanMessage(content="Hi! I am Bob.")],
-        "language": "German"
+        "language": "English"
     }
 )
+
+print(response.content)
+
+"""
+    Now, if we try asking "what is my name" it won't be able to answer the question, as there is no msg history set for this msgs.
+    But, rather if we try asking "what math problem did i ask?", it will answer '2 + 2', as we are tracking those msgs.
+"""
+
+# now, let's wrap this in msg history
+with_message_history = RunnableWithMessageHistory(
+    chain,
+    get_session_history,
+    input_messages_key="messages",
+)
+
+config = {
+    "configurable": {"session_id": "abc1"}
+}
+
+response = with_message_history.invoke(
+    {
+        "messages": messages + [HumanMessage(content="What is my name?")],
+        "language": "English",
+    },
+    config=config,
+)
+
+print(response.content)
+
+response = with_message_history.invoke(
+    {
+        "messages": [HumanMessage(content="what math problem did i ask?")],
+        "language": "English",
+    },
+    config=config,
+)
+
+print(response.content)
