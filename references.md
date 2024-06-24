@@ -16,3 +16,11 @@
 - **Advanced NLP**
   - Hugging Face documentation
   - https://1rivet.udemy.com/course/llms-mastery-complete-guide-to-transformers-generative-ai/learn/lecture/
+
+
+- **Langchain**
+  - Langchain documentation
+  - Langchain Smith documentation
+  - Langchain Serve documentation
+  - https://www.youtube.com/watch?v=KmQOlg5YfU0&list=PLZoTAELRMXVOQPRG7VAuHL--y97opD5GQ&index=1 (Full Updated Langchain Playlist by Krish Naik)
+  
