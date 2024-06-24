@@ -4,7 +4,7 @@
   - https://medium.com/@prabhuss73/spacy-vs-nltk-a-comprehensive-comparison-of-two-popular-nlp-libraries-in-python-b66dc477a689
 
 
-- Stemming Techniques
+- **Stemming Techniques**
   - https://www.geeksforgeeks.org/introduction-to-stemming/
 
 
